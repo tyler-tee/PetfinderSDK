@@ -53,11 +53,23 @@ class PetFinderAPI:
             print(f"Error: {response['data']}")
             return response
 
-    def get_organizations(self, limit: int = 10, **kwargs) -> dict:
+    def get_organizations(self, limit: int = 20, **kwargs) -> dict:
         params = kwargs
         params['limit'] = limit
         
         response = self._make_request('GET', 'organizations', params=params)
+        
+        if response['success']:
+            total_pages = response['data']['pagination']['total_pages']
+            current_page = response['data']['pagination']['current_page']
+
+            while current_page != total_pages:
+                current_page += 1
+                params['page'] = current_page
+                next_response = self._make_request('GET', 'organizations', params=params)
+
+                response['data']['organizations'].extend(next_response['data']['organizations'])
+                response['data']['pagination'] = next_response['data']['pagination']
 
         return response
     
@@ -79,9 +91,22 @@ class PetFinderAPI:
         return response
     
     def get_animals(self, **kwargs):
+        params = kwargs
 
         response = self._make_request('GET', 'animals', params=kwargs)
         
+        if response['success']:
+            total_pages = response['data']['pagination']['total_pages']
+            current_page = response['data']['pagination']['current_page']
+
+            while current_page != total_pages:
+                current_page += 1
+                params['page'] = current_page
+                next_response = self._make_request('GET', 'animals', params=params)
+
+                response['data']['animals'].extend(next_response['data']['animals'])
+                response['data']['pagination'] = next_response['data']['pagination']
+
         return response
     
     def get_animal(self, animal_id: int):
