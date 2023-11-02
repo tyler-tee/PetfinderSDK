@@ -37,6 +37,20 @@ class PetFinderAPI:
         return error_details
 
     def auth(self) -> dict:
+        """
+        Handles initial authentication to obtain an Oauth token.
+        Automatically sets it in the client's headers.
+
+        Returns:
+            dict: {
+                'success',
+                'data': {
+                       'token_type': 'Bearer',
+                       'expires_in': 3600,
+                       'access_token': '<token>'
+                        }
+                   }
+        """
         data = {'grant_type': 'client_credentials',
                 'client_id': self.api_key,
                 'client_secret': self.api_sec}
@@ -51,9 +65,26 @@ class PetFinderAPI:
             return response
         else:
             print(f"Error: {response['data']}")
+
             return response
 
     def get_organizations(self, limit: int = 20, **kwargs) -> dict:
+        """
+        Returns details on a group of orgs based on given parameters.
+
+        Args:
+            limit (int, optional): Max # of results to return. Defaults to 20.
+
+        Returns:
+            dict: {
+                'success': bool
+                'data': {
+                    'organizations': [organazitions]
+                    'pagination': {pagination_dict}
+                        }
+                }
+        """
+
         params = kwargs
         params['limit'] = limit
 
@@ -73,24 +104,93 @@ class PetFinderAPI:
 
         return response
 
-    def get_organization(self, organization_id: id) -> dict:
+    def get_organization(self, organization_id: str) -> dict:
+        """
+        Returns details on a single organization based on ID.
+
+        Args:
+            organization_id (str): Organization ID (obtained via get_organizations())
+
+        Returns:
+            dict: {
+                'success': bool,
+                'data': {
+                    'organization': {organization_dict}
+                    }
+                }
+        """
+
         resource = f'/organizations/{organization_id}'
         response = self._make_request('GET', resource)
 
         return response
 
-    def get_animal_types(self):
+    def get_animal_types(self) -> dict:
+        """
+        Returns array of possible animal types.
+
+        Returns:
+            dict: {
+                'success': bool,
+                'data': {
+                    'types': [animal_lst]
+                }
+            }
+        """
+
         response = self._make_request('GET', 'types')
 
         return response
 
-    def get_animal_breeds(self, animal_type: str):
+    def get_animal_type(self) -> dict:
+        """
+        Returns details on a single animal type.
+
+        Returns:
+            dict: {
+                'success': bool,
+                'data': {
+                    'type': {type_dict}
+                }
+            }
+        """
+        response = self._make_request('GET', 'type')
+
+        return response
+
+    def get_animal_breeds(self, animal_type: str) -> dict:
+        """
+        Returns possible breed values for a given animal type.
+
+        Args:
+            animal_type (str): Animal Type obtained via get_animal_types().
+
+        Returns:
+            dict: {
+                'success': bool,
+                'data': 'breeds': [breed_lst]
+            }
+        """
+
         resource = f'types/{animal_type}/breeds'
         response = self._make_request('GET', resource)
 
         return response
 
     def get_animals(self, **kwargs) -> dict:
+        """
+        Returns details on a group of animals based on given criteria.
+        Handles pagination automatically.
+
+        Returns:
+            dict: {
+                'success': bool,
+                'data': {
+                    'animals': [animal_lst],
+                    'pagination': {pagination_dict}
+                }
+            }
+        """
 
         params = kwargs
 
@@ -111,6 +211,18 @@ class PetFinderAPI:
         return response
 
     def get_animal(self, animal_id: int):
+        """
+        Returns details on the specified animal based on ID.
+
+        Args:
+            animal_id (int): Animal ID (obtained via get_animals())
+
+        Returns:
+            _type_: {
+                'success': bool,
+                'data': 'animal': {animal_dict}
+            }
+        """
 
         resource = f'animals/{animal_id}'
         response = self._make_request('GET', resource)
