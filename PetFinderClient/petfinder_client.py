@@ -1,7 +1,7 @@
 import requests
 
 
-class PetFinderAPI:
+class PetFinderClient:
 
     def __init__(self, api_key: str, api_sec: str):
         self.api_key = api_key
