@@ -20,13 +20,13 @@ class PetFinder:
 
         if response.status_code == 200:
             token = response.json()['access_token']
-        else:
-            print('Error authenticating.')
-            return None
-
-        self.client.headers = {'Authorization': f'Bearer {token}'}
-
-        return token
+            self.client.headers = {'Authorization': f'Bearer {token}'}
+            
+            return token
+            
+        print('Error authenticating.')
+        
+        return None
 
     def get_organizations(self, **kwargs):
         params = kwargs
@@ -38,8 +38,42 @@ class PetFinder:
             return response.json()['organizations']
 
         print('Error: ', response.status_code, response.headers, response.text)
+        
+        return None
+    
+    def get_organization(self, organization_id: id):
+        
+        response = self.client.get(f'{self.base_url}/organizations/{organization_id}')
+
+        if response.status_code == 200:
+            return response.json()['organization']
+
+        print('Error: ', response.status_code, response.headers, response.text)
+        
         return None
 
+    def get_animal_types(self):
+        
+        response = self.client.get(f'{self.base_url}/types')
+
+        if response.status_code == 200:
+            return response.json()['types']
+
+        print('Error: ', response.status_code, response.headers, response.text)
+        
+        return None
+    
+    def get_animal_breeds(self, animal_type: str):
+        
+        response = self.client.get(f'{self.base_url}/types/{animal_type}/breeds')
+
+        if response.status_code == 200:
+            return response.json()['breeds']
+
+        print('Error: ', response.status_code, response.headers, response.text)
+        
+        return None
+    
     def get_animals(self, **kwargs):
 
         response = self.client.get(f'{self.base_url}/animals', params=kwargs)
@@ -48,4 +82,16 @@ class PetFinder:
             return response.json()['animals']
 
         print('Error: ', response.status_code, response.headers, response.text)
+        
+        return None
+    
+    def get_animal(self, animal_id: int):
+        
+        response = self.client.get(f'{self.base_url}/animals/{animal_id}')
+        
+        if response.status_code == 200:
+            return response.json()['animal']
+
+        print('Error: ', response.status_code, response.headers, response.text)
+        
         return None
