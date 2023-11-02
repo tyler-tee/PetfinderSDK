@@ -6,9 +6,9 @@ with open(path.join(currrent_direct, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='PetfinderSDK',
+    name='PetfinderClient',
     version='0.1.0',
-    packages=['PetfinderSDK'],
+    packages=['PetfinderClient'],
     url='https://github.com/tyler-tee/petfindersdk',
     license='MIT',
     author='Tyler Talaga',
