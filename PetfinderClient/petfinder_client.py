@@ -68,9 +68,10 @@ class PetfinderClient:
 
             return response
 
-    def get_organizations(self, limit: int = 20, **kwargs) -> dict:
+    def get_organizations_paginated(self, limit: int = 20, **kwargs) -> dict:
         """
         Returns details on a group of orgs based on given parameters.
+        Pagination handled automatically.
 
         Args:
             limit (int, optional): Max # of results to return. Defaults to 20.
@@ -101,6 +102,30 @@ class PetfinderClient:
 
                 response['data']['organizations'].extend(next_response['data']['organizations'])
                 response['data']['pagination'] = next_response['data']['pagination']
+
+        return response
+
+    def get_organizations(self, limit: int = 20, **kwargs) -> dict:
+        """
+        Returns details on a group of orgs based on given parameters.
+
+        Args:
+            limit (int, optional): Max # of results to return. Defaults to 20.
+
+        Returns:
+            dict: {
+                'success': bool
+                'data': {
+                    'organizations': [organazitions]
+                    'pagination': {pagination_dict}
+                        }
+                }
+        """
+
+        params = kwargs
+        params['limit'] = limit
+
+        response = self._make_request('GET', 'organizations', params=params)
 
         return response
 
@@ -177,7 +202,7 @@ class PetfinderClient:
 
         return response
 
-    def get_animals(self, **kwargs) -> dict:
+    def get_animals_paginated(self, **kwargs) -> dict:
         """
         Returns details on a group of animals based on given criteria.
         Handles pagination automatically.
@@ -194,7 +219,7 @@ class PetfinderClient:
 
         params = kwargs
 
-        response = self._make_request('GET', 'animals', params=kwargs)
+        response = self._make_request('GET', 'animals', params=params)
 
         if response['success']:
             total_pages = response['data']['pagination']['total_pages']
@@ -207,6 +232,24 @@ class PetfinderClient:
 
                 response['data']['animals'].extend(next_response['data']['animals'])
                 response['data']['pagination'] = next_response['data']['pagination']
+
+        return response
+
+    def get_animals(self, **kwargs) -> dict:
+        """
+        Returns details on a group of animals based on given criteria.
+
+        Returns:
+            dict: {
+                'success': bool,
+                'data': {
+                    'animals': [animal_lst],
+                    'pagination': {pagination_dict}
+                }
+            }
+        """
+
+        response = self._make_request('GET', 'animals', params=kwargs)
 
         return response
 
