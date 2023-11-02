@@ -8,7 +8,7 @@ with open(path.join(currrent_direct, 'README.md'), encoding='utf-8') as f:
 setup(
     name='PetfinderSDK',
     version='0.1.0',
-    packages=['Pet'],
+    packages=['PetfinderSDK'],
     url='https://github.com/tyler-tee/petfindersdk',
     license='MIT',
     author='Tyler Talaga',
